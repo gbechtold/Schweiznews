@@ -23,6 +23,9 @@
         background-color: var(--background-light);
         color: var(--text-dark);
         line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
 
       header {
@@ -71,6 +74,7 @@
         padding: 2rem;
         max-width: 1400px;
         margin: 0 auto;
+        flex: 1;
       }
 
       .news-card {
@@ -90,6 +94,7 @@
         width: 100%;
         height: 200px;
         object-fit: cover;
+        background-color: #f0f0f0;
       }
 
       .news-content {
@@ -148,6 +153,24 @@
         animation: spin 1s linear infinite;
       }
 
+      footer {
+        background: var(--text-dark);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        margin-top: auto;
+      }
+
+      footer a {
+        color: white;
+        text-decoration: none;
+        margin: 0 1rem;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
       @keyframes spin {
         0% {
           transform: rotate(0deg);
@@ -182,32 +205,39 @@
       <!-- News cards will be populated here -->
     </main>
 
+    <footer>
+      <div>
+        <a href="#" onclick="alert('© 2024 Swiss News. Alle Rechte vorbehalten.')">Copyright</a>
+        <a href="#" onclick="alert('Powered by SRF News Feed')">Credits</a>
+        <a href="#" onclick="alert('Kontaktieren Sie uns unter: contact@swissnews.ch')">Kontakt</a>
+      </div>
+      <div style="margin-top: 1rem; font-size: 0.8rem">Powered by SRF News Feed | Developed by Swiss News Team</div>
+    </footer>
+
     <div class="loading-overlay">
       <div class="loading-spinner"></div>
     </div>
 
     <script>
-      // RSS feed URL
       const RSS_URL = 'https://www.srf.ch/news/bnf/rss/19032223';
-      // CORS proxy URL (replace with your own proxy if needed)
       const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
       function createNewsCard(item) {
         const date = new Date(item.pubDate).toLocaleDateString('de-CH');
         return `
-                <article class="news-card animate__animated animate__fadeIn">
-                    <img src="/api/placeholder/400/320" alt="${item.title}" class="news-image">
-                    <div class="news-content">
-                        <span class="news-category">SRF News</span>
-                        <h2 class="news-title">${item.title}</h2>
-                        <p class="news-excerpt">${item.description || ''}</p>
-                        <div class="news-meta">
-                            <span>📅 ${date}</span>
-                            <a href="${item.link}" target="_blank" rel="noopener noreferrer">🔗 Mehr lesen</a>
-                        </div>
-                    </div>
-                </article>
-            `;
+          <article class="news-card animate__animated animate__fadeIn">
+            
+            <div class="news-content">
+              <span class="news-category">SRF News</span>
+              <h2 class="news-title">${item.title}</h2>
+              <p class="news-excerpt">${item.description || ''}</p>
+              <div class="news-meta">
+                <span>📅 ${date}</span>
+                <a href="${item.link}" target="_blank" rel="noopener noreferrer">🔗 Mehr lesen</a>
+              </div>
+            </div>
+          </article>
+        `;
       }
 
       async function fetchRSSFeed() {
@@ -241,9 +271,7 @@
             return;
           }
 
-          newsItems.forEach((item) => {
-            newsGrid.innerHTML += createNewsCard(item);
-          });
+          newsGrid.innerHTML = newsItems.map((item) => createNewsCard(item)).join('');
         } catch (error) {
           console.error('Error:', error);
           document.querySelector('.loading-overlay').style.display = 'none';
